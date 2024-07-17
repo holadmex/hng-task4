@@ -1,8 +1,15 @@
 name: PR Deployment
 
 on:
+  push:
+    branches:
+      - main
+      - my-feature-branch
   pull_request:
     types: [opened, synchronize, closed]
+    branches:
+      - main
+      - my-feature-branch
 
 jobs:
   build-and-deploy:
