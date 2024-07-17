@@ -1,0 +1,4 @@
+# Dependency directories
+node_modules/
+.env
+holadmex-webhook-test-app.2024-07-17.private-key.pem
