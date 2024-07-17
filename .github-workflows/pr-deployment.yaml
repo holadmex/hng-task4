@@ -1,10 +1,7 @@
 name: Build and Deploy Docker Image
 
 on:
-  push:
-    branches:
-      - main
-      - my-feature-branch
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize, closed]
     branches:
