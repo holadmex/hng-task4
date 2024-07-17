@@ -1,17 +1,12 @@
-name: CI/CD Pipeline
+name: Build and Deploy Docker Image
 
 on:
-  push:
-    branches:
-      - main
-      - 'feature/*'
   pull_request:
     types: [opened, synchronize, closed]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event.action != 'closed'
 
     steps:
       - name: Checkout code
@@ -26,29 +21,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t my-app:${{ github.sha }} .
-          docker push my-app:${{ github.sha }}
+      - name: Build Docker image
+        run: docker build -t my-app:${{ github.sha }} .
+
+        # Specify path to Dockerfile
+        working-directory: ./  # Adjust path if Dockerfile is in a different directory
+
+      - name: Push Docker image to Docker Hub
+        run: docker push my-app:${{ github.sha }}
 
       - name: Deploy Docker container
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged
         run: |
-          docker run -d --name pr-${{ github.event.number }} -p 8080:8080 my-app:${{ github.sha }}
+          docker run -d --name pr-${{ github.event.number }} my-app:${{ github.sha }}
 
-  cleanup:
-    if: github.event.action == 'closed'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Stop and remove Docker container
+      - name: Remove Docker container on PR close (not merged)
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && !github.event.pull_request.merged
         run: |
           docker rm -f pr-${{ github.event.number }}
