@@ -44,14 +44,14 @@ async function handlePullRequestOpened({ octokit, payload }) {
     }
     console.error(error);
   }
-};
+}
 
 // Handle pull request closed (merged) event
 async function handlePullRequestClosed({ octokit, payload }) {
   if (payload.pull_request.merged) {
     console.log(`Received a pull request merged event for #${payload.pull_request.number}`);
 
-    const deploymentUrl = `http://localhost:8080`; // Replace with your deployment URL
+    const deploymentUrl = process.env.DEPLOYMENT_URL; // Ensure DEPLOYMENT_URL is set in your .env file
 
     try {
       await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
@@ -89,7 +89,7 @@ async function handlePullRequestClosed({ octokit, payload }) {
       console.error(error);
     }
   }
-};
+}
 
 // Set up webhook event listeners for pull request events
 app.webhooks.on("pull_request.opened", handlePullRequestOpened);
