@@ -1,15 +1,8 @@
 name: PR Deployment
 
 on:
-  push:
-    branches:
-      - main
-      - my-feature-branch
   pull_request:
     types: [opened, synchronize, closed]
-    branches:
-      - main
-      - my-feature-branch
 
 jobs:
   build-and-deploy:
@@ -29,7 +22,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t my-app:${{ github.sha }} --file ./hng-task4/Dockerfile
+        run: docker build -t my-app:${{ github.sha }} --file ./hng-task4/Dockerfile ./hng-task4
 
       - name: Push Docker image to Docker Hub
         run: docker push my-app:${{ github.sha }}
