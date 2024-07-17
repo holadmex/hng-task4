@@ -34,7 +34,7 @@ jobs:
         id: docker_build_push
         uses: docker/build-push-action@v4
         with:
-          context: ./hng-task4  # Adjust context path as needed
+          context: ./hng-task4/  # Adjust context path as needed
           file: /Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
