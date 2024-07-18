@@ -36,12 +36,12 @@ jobs:
           context: .  # Adjust context path as needed
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-app:${GITHUB_SHA::7}
+          tags: ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
 
       - name: Deploy Docker container
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged
         run: |
-          docker run -d --name pr-${{ github.event.number }} ${{ secrets.DOCKER_USERNAME }}/my-app:${GITHUB_SHA::7}
+          docker run -d --name pr-${{ github.event.number }} ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
 
       - name: Remove Docker container on PR close (not merged)
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && !github.event.pull_request.merged
