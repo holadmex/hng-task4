@@ -10,6 +10,7 @@ const appId = process.env.APP_ID;
 const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKeyPath = process.env.PRIVATE_KEY_PATH;
 const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+const deploymentUrl = process.env.DEPLOYMENT_URL;
 
 const app = new App({
   appId: appId,
@@ -50,8 +51,6 @@ async function handlePullRequestOpened({ octokit, payload }) {
 async function handlePullRequestClosed({ octokit, payload }) {
   if (payload.pull_request.merged) {
     console.log(`Received a pull request merged event for #${payload.pull_request.number}`);
-
-    const deploymentUrl = process.env.DEPLOYMENT_URL; // Ensure DEPLOYMENT_URL is set in your .env file
 
     try {
       await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {

@@ -50,3 +50,12 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && !github.event.pull_request.merged
         run: |
           docker rm -f pr-${{ github.event.number }}
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Remove Docker container
+        run: |
+          docker rm -f pr-${{ github.event.number }}
